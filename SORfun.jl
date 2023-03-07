@@ -44,3 +44,7 @@ convergence = 1e-6
 
 print(SOR(A,b,omega, initialGuess, convergence))
 =#
+
+for y in [1,2,3]
+    print(y)
+end

@@ -5,13 +5,12 @@ using CSV
 using DataFrames
 
 function modelFunction( x, a)
-    a[1]  + a[2]*x
-end
+    return a[1]  + a[2]*x + a[3]*x^2
+    end
 
 function changeZeroOneArray(onesPlace, arr)
     arr[:] .= 0
     arr[onesPlace] = 1
-    return arr
 end
 
 
@@ -35,27 +34,29 @@ function myCurveFit( X, y)
 end
 
 ## Part 5
-
 #=
-
-x = [0.01:.01:10;]
-y = 2  .+ 1.2 .* x
-
-yWNoise = poisson(y, 100)
-
-plot(x,[y, yWNoise])
+yourmom = (buildX(modelFunction, x, 3))
 
 
-a = myCurveFit(buildX(modelFunction, x, 2), yWNoise)
 
-newYs = x .* a[2] .+ a[1]
+x = LinRange(0,10,3000)
+y = 3 .* x.^2  .+ 2 .* x .+ 1
+
+yWNoise = add_gauss(y, 10)
+
+plot(x,[ yWNoise])
+
+
+a = myCurveFit(buildX(modelFunction, x, 3), yWNoise)
+
+newYs = x.^2 .* a[3] .+ x .* a[2] .+ a[1]
 display(a)
-plot(x, [y, yWNoise, newYs])
-
-
+plot(x, [yWNoise, newYs])
 =#
 
-digitizerResultsFrame = DataFrame(CSV.File("curvePoints.csv"))
+
+
+digitizerResultsFrame = DataFrame(CSV.File("curvePoints3.csv"))
 plot(digitizerResultsFrame[:,1], digitizerResultsFrame[:,2])
 
 
@@ -81,16 +82,17 @@ function modelFunctionrubber( λ, C)
 end
 
 function evaluateRubber()
-    alpha = [1:.1:7.5;]
-
     avals = myCurveFit(buildX(modelFunctionrubber, digitizerResultsFrame[:,1], 5), digitizerResultsFrame[:,2])
 
     resultYs = zeros(Float64, length(digitizerResultsFrame[:,1]))
     for i in 1:length(digitizerResultsFrame[:,1])
-        resultYs[i] = modelFunctionrubber(alpha[i], avals)
+        resultYs[i] = modelFunctionrubber(digitizerResultsFrame[i,1], avals)
     end
 
     plot(digitizerResultsFrame[:,1], [digitizerResultsFrame[:,2], resultYs])
-
+    #return avals
 
 end
+
+evaluateRubber()
+display(aval)
